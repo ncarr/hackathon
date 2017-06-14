@@ -1,9 +1,8 @@
-'use strict';
+const discord = require('./discord');
 
-const app = require('./app');
-const port = app.get('port');
-const server = app.listen(port);
+const express = require('express');
+const app = express();
 
-server.on('listening', () =>
-  console.log(`Feathers application started on ${app.get('host')}:${port}`)
-);
+app.use('/connect/discord', discord)
+
+app.listen(8000);

@@ -1,0 +1,6 @@
+{
+    "CLIENT_ID": "Discord bot client ID",
+    "CLIENT_SECRET": "Discord bot client secret",
+    "TOKEN": "Discord bot token",
+    "GUILD": "ID of your event's server"
+}
