@@ -2,6 +2,25 @@ var endpoint;
 var key;
 var authSecret;
 
+function urlB64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// Set the public key
+const applicationServerPublicKey = "BIFcQh6KI5-j2sggnMUOnQSBCiXecqSTcwvOAvot3GpGNncfXKNtGiQ0fho3Bx3e6_1ozj8icVwVd7lnFkzPRoo";
+const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+
 // Register a Service Worker.
 navigator.serviceWorker.register('sw.js')
 .then(function(registration) {
@@ -18,10 +37,14 @@ navigator.serviceWorker.register('sw.js')
     }).then(function () {
       // Otherwise, subscribe the user (userVisibleOnly allows to specify that we don't plan to
       // send notifications that don't have a visible effect for the user).
-      return registration.pushManager.subscribe({ userVisibleOnly: true });
+      return registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+      });
     });
   });
 }).then(function(subscription) {
+  // TODO: only upload the subscription when it exists and is new and add a pushsubscriptionchange handler
   // Retrieve the user's public key.
   var rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
   key = rawKey ?
@@ -40,10 +63,6 @@ navigator.serviceWorker.register('sw.js')
     headers: {
       'Content-type': 'application/json'
     },
-    body: JSON.stringify({
-      endpoint: subscription.endpoint,
-      key: key,
-      authSecret: authSecret,
-    }),
+    body: JSON.stringify({ data: subscription })
   });
 });

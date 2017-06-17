@@ -18,10 +18,12 @@
   },
   "homepage": "https://github.com/ncarr/hackathon#readme",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "discord.js": "^11.1.0",
     "mongoose": "^4.10.5",
     "passport": "^0.3.2",
     "passport-discord": "^0.1.2",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "web-push": "^3.2.2"
   }
 }
