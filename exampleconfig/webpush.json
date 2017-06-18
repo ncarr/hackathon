@@ -1,0 +1,6 @@
+{
+    "VAPID_CONTACT_URI": "mailto or http url",
+    "VAPID_PUBLIC_KEY": "A public key",
+    "VAPID_PRIVATE_KEY": "A private key",
+    "GCM_API_KEY": "A Firebase Cloud Messaging API key from your Firebase project"
+}

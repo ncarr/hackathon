@@ -1,6 +1,6 @@
 {
-    "CLIENT_ID": "Discord bot client ID",
-    "CLIENT_SECRET": "Discord bot client secret",
-    "TOKEN": "Discord bot token",
+    "CLIENT_ID": "client ID from discordapp.com/applications/me",
+    "CLIENT_SECRET": "client secret from discordapp.com/applications/me",
+    "TOKEN": "bot token from discordapp.com/applications/me",
     "GUILD": "ID of your event's server"
 }

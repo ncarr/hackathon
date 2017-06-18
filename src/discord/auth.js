@@ -1,4 +1,7 @@
 module.exports = bot => {
+    const ServerError = require('../errors/ServerError');
+    const restrictToAuthenticated = require('../auth/restrictToAuthenticated');
+
     const path = require('path');
     const cfg = require('../../config/discord');
     const express = require('express');
@@ -15,35 +18,36 @@ module.exports = bot => {
             clientID: cfg.CLIENT_ID,
             clientSecret: cfg.CLIENT_SECRET,
             callbackURL: 'http://localhost:8000/connect/discord/callback',
-            scope: scopes
+            scope: scopes,
+            passReqToCallback: true
         },
-        (accessToken, refreshToken, profile, done) => {
-            User.findOne({ email: profile.email }, (err, user) => {
-                if (err) {
-                    return done(err);
-                } else if (user) {
-                  for ([snowflake, guild] of bot.guilds) {
-                      if (snowflake == cfg.GUILD) {
-                          guild.addMember(profile, { accessToken: accessToken, nick: user.name });
-                          user.discord = profile.id;
-                          user.save((user) => {})
+        (req, accessToken, refreshToken, profile, done) => {
+            User.findOne({ id: req.user.id }).exec()
+                .then(user => {
+                    if (user) {
+                      for ([snowflake, guild] of bot.guilds) {
+                          if (snowflake == cfg.GUILD) {
+                              guild.addMember(profile, { accessToken: accessToken, nick: user.name });
+                              user.discord = profile.id;
+                              return user.save()
+                                .then(user => done(null, profile));
+                          }
                       }
-                  }
-                  return done(err, profile);
-                } else {
-                  return done(err, false);
-                }
-            });
+                      // If we haven't returned a user yet, the bot is no longer in the event's server
+                      return done(new ServerError('Bot is not in the Discord server for the event'));
+                    } else {
+                      return done(null, false);
+                    }
+                })
+                .catch(done);
         }
     ));
-
-    router.use(passport.initialize());
-    router.get('/', passport.authenticate('discord', { 'session': false }));
-    router.get('/callback', passport.authenticate('discord', {
+    router.use(restrictToAuthenticated);
+    router.get('/', passport.authorize('discord', { 'session': false }));
+    router.get('/callback', passport.authorize('discord', {
         session: false,
-        successRedirect: '/connect/discord/success',
         failureRedirect: '/connect/discord/failure'
-    }));
+    }), (req, res, next) => res.redirect('/connect/discord/success'));
     router.get('/success', (req, res) => {
         res.sendFile(path.join(__dirname + '/views/success.html'));
     });

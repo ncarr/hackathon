@@ -1,0 +1,5 @@
+{
+    "SESSION_SECRET": "a private key",
+    "CLIENT_ID": "client id from my.mlh.io",
+    "CLIENT_SECRET": "client secret from my.mlh.io"
+}

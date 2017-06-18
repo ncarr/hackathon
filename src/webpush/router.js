@@ -1,6 +1,7 @@
 const webPush = require('web-push');
 const express = require('express');
 const config = require('../../config/webpush');
+const restrictToRole = require('../auth/restrictToRole');
 
 const PushSubscription = require('./models/PushSubscription');
 const PushMessage = require('./models/PushMessage');
@@ -20,13 +21,13 @@ app.post('/register', (req, res, next) => {
         .catch(next);
 });
 
-app.post('/blast', (req, res, next) => {
+app.post('/blast', restrictToRole('organizer'), (req, res, next) => {
     PushMessage.create({ data: req.body.data })
         .then(msg => {
             return PushSubscription.find().exec()
                 .then(subs => {
                     return Promise.all(subs.map(subscriber => {
-                        webPush.sendNotification(subscriber.data.data, req.body.data)
+                        return webPush.sendNotification(subscriber.data.data, req.body.data)
                             .catch(err => {
                                 console.log(err);
                                 msg.failedRecipients.push(subscriber._id);
