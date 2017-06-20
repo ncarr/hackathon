@@ -9,7 +9,7 @@ module.exports = bot => {
 
     const passport = require('passport');
     const DiscordStrategy = require('passport-discord').Strategy;
-    const scopes = ['identify', 'email', 'guilds', 'guilds.join'];
+    const scopes = ['identify', 'guilds', 'guilds.join'];
 
     const User = require('../models/user');
      

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const uuid = require('uuid');
 var userSchema = mongoose.Schema({
     id: {type: Number, required: true, unique: true},
     email: {type: String, required: true, unique: true},
     name: String,
+    events: [{ type: String, ref: 'Event' }],
     shirtSize: String,
     dietaryRestrictions: String,
     specialNeeds: String,
@@ -11,6 +11,8 @@ var userSchema = mongoose.Schema({
     school: mongoose.Schema.Types.Mixed,
     accessToken: String,
     roles: [String],
-    discord: String
+    discord: String,
+    github: String,
+    githubToken: String
 });
 module.exports = mongoose.model('User', userSchema)

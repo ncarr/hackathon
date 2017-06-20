@@ -54,7 +54,7 @@ passport.use(new MyMLHStrategy(
     }
 ));
 
-app.get('/', passport.authenticate('mymlh', { scope: scopes }));
+app.get('/', passport.authenticate('mymlh'));
 app.get('/callback', passport.authenticate('mymlh', {
     failureRedirect: '/auth/mymlh/failure'
 }), (req, res, next) => {

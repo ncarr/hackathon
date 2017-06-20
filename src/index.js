@@ -1,6 +1,9 @@
 const MONGO_URL = require('../config/mongodb').URL;
 const SESSION_SECRET = require('../config/mymlh').SESSION_SECRET;
 const path = require('path');
+const Event = require('./models/event');
+
+const restrictToAuthenticated = require('./auth/restrictToAuthenticated');
 
 const mongoose = require('mongoose');
 mongoose.connect(MONGO_URL);
@@ -15,6 +18,8 @@ const MongoStore = require('connect-mongo')(session);
 const handler = require('./errors');
 const mymlh = require('./mymlh');
 const discord = require('./discord');
+const github = require('./github');
+const api = require('./api');
 const webpush = require('./webpush');
 
 const express = require('express');
@@ -34,7 +39,13 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/auth/mymlh', mymlh);
 app.use('/connect/discord', discord);
-app.use('/webpush', webpush)
-app.use(handler)
+app.use('/connect/github', github.auth);
+app.use('/github', github.api);
+app.use('/api', api)
+app.use('/webpush', webpush);
+app.get('/dashboard', restrictToAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname + '/views/dashboard.html'));
+});
+app.use(handler);
 
 app.listen(8000);

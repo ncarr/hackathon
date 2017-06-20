@@ -27,7 +27,9 @@
     "mongoose": "^4.10.5",
     "passport": "^0.3.2",
     "passport-discord": "^0.1.2",
+    "passport-github": "^1.1.0",
     "passport-mymlh": "^2.0.1",
+    "passport-oauth2-refresh": "^1.0.0",
     "uuid": "^3.0.1",
     "web-push": "^3.2.2"
   }
