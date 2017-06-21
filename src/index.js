@@ -1,7 +1,6 @@
 const MONGO_URL = require('../config/mongodb').URL;
 const SESSION_SECRET = require('../config/mymlh').SESSION_SECRET;
 const path = require('path');
-const Event = require('./models/event');
 
 const restrictToAuthenticated = require('./auth/restrictToAuthenticated');
 
@@ -20,6 +19,7 @@ const mymlh = require('./mymlh');
 const discord = require('./discord');
 const github = require('./github');
 const api = require('./api');
+const graphiqlExpress = require('graphql-server-express').graphiqlExpress;
 const webpush = require('./webpush');
 
 const express = require('express');
@@ -41,7 +41,10 @@ app.use('/auth/mymlh', mymlh);
 app.use('/connect/discord', discord);
 app.use('/connect/github', github.auth);
 app.use('/github', github.api);
-app.use('/api', api)
+app.use('/api', api);
+app.use('/graphiql', graphiqlExpress({
+  endpointURL: '/api/graphql',
+}));
 app.use('/webpush', webpush);
 app.get('/dashboard', restrictToAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname + '/views/dashboard.html'));

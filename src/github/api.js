@@ -12,6 +12,7 @@ app.get('/repos', restrictToGithub, (req, res, next) => {
         repositories(affiliations: [OWNER, COLLABORATOR], first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
           edges {
             node {
+              id
               name
               url
             }

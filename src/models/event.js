@@ -11,6 +11,7 @@ var eventSchema = mongoose.Schema({
     },
     discordURL: String,
     discordID: String,
+    githubName: String,
     githubURL: String,
     githubID: String,
     links: [String],
