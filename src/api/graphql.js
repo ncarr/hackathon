@@ -1,4 +1,6 @@
 const restrictToAuthenticated = require('../auth/restrictToAuthenticated');
+const Lokka = require('lokka').Lokka;
+const Transport = require('lokka-transport-http').Transport;
 const express = require('express');
 const EventModel = require('../models/event');
 const UserModel = require('../models/user');
@@ -178,7 +180,7 @@ var schema = makeExecutableSchema({
                     return new Error('No id or url given, cannot resolve id');
                 }
             },
-            url() {
+            url(obj) {
                 if (obj.url) {
                     return obj.url;
                 } else if (obj.id) {
@@ -194,7 +196,7 @@ var schema = makeExecutableSchema({
                     return new Error('No id or url given, cannot resolve url');
                 }
             },
-            name() {
+            name(obj) {
                 if (obj.name) {
                     return obj.name;
                 } else if (obj.id) {
