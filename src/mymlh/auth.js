@@ -45,6 +45,7 @@ passport.use(new MyMLHStrategy(
                       gender: profile.gender,
                       school: profile.school,
                       accessToken: accessToken,
+                      newUser: true,
                       roles: ['hacker']
                   })
                     .then(user => done(null, user))
@@ -67,7 +68,11 @@ app.get('/callback', passport.authenticate('mymlh', {
     })
 });
 app.get('/success', (req, res) => {
-    res.sendFile(path.join(__dirname + '/views/success.html'));
+    if (req.user.newUser) {
+        res.sendFile(path.join(__dirname + '/views/success.html'));
+    } else {
+        res.redirect('/dashboard');
+    }
 });
 app.get('/failure', (req, res) => {
     res.sendFile(path.join(__dirname + '/views/failure.html'));

@@ -10,6 +10,7 @@ var userSchema = mongoose.Schema({
     gender: String,
     school: mongoose.Schema.Types.Mixed,
     accessToken: String,
+    newUser: Boolean,
     roles: [String],
     discord: String,
     github: String,

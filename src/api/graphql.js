@@ -19,7 +19,8 @@ var schema = makeExecutableSchema({
         scalar Date
         type Query {
             viewer: User!
-            messages: [PushMessage]
+            events: [Event]
+            publicMessages: [PushMessage]
         }
         type User {
             id: Int!
@@ -33,6 +34,7 @@ var schema = makeExecutableSchema({
             school: School
             roles: [String]!
             github: GitHub
+            discord: ID
         }
         type Event {
             id: ID!
@@ -66,6 +68,7 @@ var schema = makeExecutableSchema({
             auth: String
         }
         type GitHub {
+            id: ID
             repos(before: ID, after: ID): RepoList
         }
         type Duration {
@@ -95,13 +98,16 @@ var schema = makeExecutableSchema({
             viewer(obj, args, context) {
                 return UserModel.findOne({ id: context.user.id }).populate('events').exec();
             },
-            messages() {
+            events(obj) {
+                return EventModel.find().exec();
+            },
+            publicMessages() {
                 return PushMessageModel.find().exec();
             }
         },
         User: {
             github(obj) {
-                return { id: obj.githubID, token: obj.githubToken };
+                return { id: obj.github, token: obj.githubToken };
             }
         },
         Event: {
@@ -115,19 +121,31 @@ var schema = makeExecutableSchema({
                 return EventModel.findOne({ id: obj.id }).populate('workshops').exec()
                     .then(self => self.workshops);
             },
-            attendees(obj) {
-                return EventModel.findOne({ id: obj.id }).populate('attendees').exec()
-                    .then(self => self.attendees);
+            attendees(obj, args, context) {
+                if (context.user.roles.contains('organizer')) {
+                    return EventModel.findOne({ id: obj.id }).populate('attendees').exec()
+                        .then(self => self.attendees);
+                } else {
+                    return new Error('Only organizers can see data from other attendees');
+                }
             }
         },
         PushMessage: {
-            recipients(obj) {
-                return PushMessageModel.findById(obj.id).populate('recipients').exec()
-                    .then(self => self.recipients);
+            recipients(obj, args, context) {
+                if (context.user.roles.contains('organizer')) {
+                    return PushMessageModel.findById(obj.id).populate('recipients').exec()
+                        .then(self => self.recipients);
+                } else {
+                    return new Error('Only organizers can see data from other attendees');
+                }
             },
-            failedRecipients(obj) {
-                return PushMessageModel.findById(obj.id).populate('failedRecipients').exec()
-                    .then(self => self.failedRecipients);
+            failedRecipients(obj, args, context) {
+                if (context.user.roles.contains('organizer')) {
+                    return PushMessageModel.findById(obj.id).populate('failedRecipients').exec()
+                        .then(self => self.failedRecipients);
+                } else {
+                    return new Error('Only organizers can see data from other attendees');
+                }
             }
         },
         GitHub: {

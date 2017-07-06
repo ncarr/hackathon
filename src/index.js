@@ -25,6 +25,7 @@ const webpush = require('./webpush');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const Nuxt = require('nuxt');
 app.use(session({
     secret: SESSION_SECRET,
     name: 'generichacks.sid',
@@ -46,9 +47,9 @@ app.use('/graphiql', graphiqlExpress({
   endpointURL: '/api/graphql',
 }));
 app.use('/webpush', webpush);
-app.get('/dashboard', restrictToAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname + '/views/dashboard.html'));
-});
+app.get('/dashboard', restrictToAuthenticated);
+const nuxt = new Nuxt(require('../nuxt.config.js'));
+app.use(nuxt.render);
 app.use(handler);
 
 app.listen(8000);

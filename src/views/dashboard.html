@@ -1,50 +1,15 @@
-<html>
-    <head>
-        <title>GenericHacks Dashboard</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div id="app">
-            <div class="tile" v-for="event in user.events">
-                <h2>{{ event.name }}</h2>
-                <p>{{ event.times.start }} - {{ event.times.end }}</p>
-                <p v-if="event.discordURL"><a :href="event.discordURL">Discord</a></p>
-                <p v-if="event.githubURL"><a :href="event.githubURL">GitHub</a></p>
-                <p>{{ event.description }}</p>
-                <ul v-if="event.links">
-                    <p>Other links</p>
-                    <li v-for="link in event.links"><a :href="link" target="_blank">{{ link }}</a></li>
-                </ul>
-            </div>
-            <div class="tile">
-                <a href="/connect/github" v-if="!user.github">
-                    <div class="tile">
-                        Connect your GitHub account to view project commits, issues and projects right from your dashboard.
-                    </div>
-                </a>
-                <a href="/connect/discord" v-if="!user.discord">
-                    <div class="tile">
-                        Connect your Discord account to join our server.
-                    </div>
-                </a>
-            </div>
-        </div>
-        <script src="https://unpkg.com/vue" charset="utf-8"></script>
-        <script>
-        var app = new Vue({
-            el: '#app',
-            data: {
-                user: {}
-            }
-        });
-        fetch('/api/users/me', { method: 'GET', credentials: 'include' })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(me) {
-                console.log(me);
-                app.user = me;
-            });
-        </script>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>GenericHacks Dashboard</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet" type="text/css">
+    <link rel="icon" type="image/png" href="public/favicon-32x32.png" sizes="32x32">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="/dist/build.js"></script>
+  </body>
 </html>
