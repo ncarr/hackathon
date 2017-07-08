@@ -1,11 +1,9 @@
 <template>
     <div>
         <v-card v-for="event in viewer.events" :key="event.id">
-            <v-card-row class="green darken-1">
-              <v-card-title>
-                <span class="white--text" v-text="event.name"></span>
-              </v-card-title>
-            </v-card-row>
+            <v-card-title>
+              <span class="white--text" v-text="event.name"></span>
+            </v-card-title>
             <v-card-text>
                 <p>{{ event.times.start }} - {{ event.times.end }}</p>
                 <p v-if="event.discord.url"><a :href="event.discord.url">Discord</a></p>

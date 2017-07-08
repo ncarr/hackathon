@@ -7,22 +7,26 @@ var client;
 export const state = () => ({viewer: {events:[], github: null, discord:null}}) // TODO: add default state
 
 export const mutations = {
-  SET_DATA: function (state, data) {
-    state.data = data
+  SET_VIEWER: function (state, data) {
+    state.viewer = data
   }
 }
 
 export const actions = {
   nuxtServerInit ({ commit }, { req }) {
-        commit('SET_DATA', {viewer: {events:[], github: null, discord:null}})
-        /*client = new ApolloClient({
+        client = new ApolloClient({
+            ssrMode: true,
             networkInterface: createNetworkInterface({
               uri: 'http://localhost:8000/api/graphql',
-              transportBatching: true,
-              opts: { credentials: 'include', headers: { cookie: req.headers.cookie } }
+              opts: {
+                credentials: 'same-origin',
+                headers: {
+                  cookie: req.header('Cookie'),
+                }
+              }
             })
         });
-        const allData = client.watchQuery({
+        return client.query({
           query: gql`{
               viewer {
                   events {
@@ -49,6 +53,6 @@ export const actions = {
               }
           }`
       })
-      return allData.result().then(result => commit('SET_DATA', result));*/
+      .then(result => commit('SET_VIEWER', result.data.viewer));
   }
 }

@@ -30,4 +30,9 @@ node_modules
 lib/
 data/
 config/
-.nuxt/
+
+# Nuxt build
+.nuxt
+
+# Nuxt generate
+dist
