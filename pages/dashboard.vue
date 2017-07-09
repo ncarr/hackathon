@@ -35,17 +35,34 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapState } from 'vuex'
+  import gql from '~plugins/apollo'
   export default {
-    data () {
-        return {
-            title: 'Dashboard'
+    fetch: gql`{
+        viewer {
+            events {
+                id
+                name
+                description
+                links
+                times {
+                    start
+                    end
+                }
+                discord {
+                    url
+                }
+                github {
+                    url
+                }
+            }
+            roles
+            discord
+            github {
+                id
+            }
         }
-    },
-    computed: {
-        viewer() {
-            return this.$store.state.viewer
-        }
-    }
+    }`,
+    computed: mapState(['viewer'])
 }
 </script>

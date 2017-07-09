@@ -29,43 +29,19 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { ApolloClient, createNetworkInterface } from 'apollo-client'
-  import 'isomorphic-fetch'
-  import gql from 'graphql-tag'
+  import gql from '~plugins/apollo'
   export default {
-    fetch ({ store, req, isServer }) {
-      return new ApolloClient({
-          ssrMode: true,
-          networkInterface: createNetworkInterface({
-            uri: 'http://localhost:8000/api/graphql',
-            opts: {
-              credentials: 'same-origin',
-              headers: isServer ? {
-                cookie: req.header('Cookie'),
-              } : {}
+    fetch: gql`{
+        events {
+            id
+            name
+            description
+            times {
+                start
+                end
             }
-          })
-      })
-      .query({
-        query: gql`{
-            events {
-                id
-                name
-                description
-                times {
-                    start
-                    end
-                }
-            }
-        }`
-      })
-      .then(result => store.commit('SET_STATE', result.data));
-    },
-    data () {
-        return {
-            title: 'Events'
         }
-    },
+    }`,
     computed: mapState(['events'])
 }
 </script>

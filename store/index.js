@@ -1,6 +1,6 @@
 import { ApolloClient, createNetworkInterface } from 'apollo-client'
 import 'isomorphic-fetch'
-import gql from 'graphql-tag'
+import gql from '~plugins/apollo'
 
 var client;
 
@@ -18,46 +18,10 @@ export const mutations = {
 }
 
 export const actions = {
-  nuxtServerInit ({ commit }, { req }) {
-        client = new ApolloClient({
-            ssrMode: true,
-            networkInterface: createNetworkInterface({
-              uri: 'http://localhost:8000/api/graphql',
-              opts: {
-                credentials: 'same-origin',
-                headers: {
-                  cookie: req.header('Cookie'),
-                }
-              }
-            })
-        });
-        return client.query({
-          query: gql`{
-              viewer {
-                  events {
-                      id
-                      name
-                      description
-                      links
-                      times {
-                          start
-                          end
-                      }
-                      discord {
-                          url
-                      }
-                      github {
-                          url
-                      }
-                  }
-                  roles
-                  discord
-                  github {
-                      id
-                  }
-              }
-          }`
-      })
-      .then(result => commit('SET_STATE', result.data));
-  }
+  nuxtServerInit: (store, ctx) => gql`
+    {
+        viewer {
+            roles
+        }
+    }`(ctx)
 }
