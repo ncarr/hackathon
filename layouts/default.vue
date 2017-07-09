@@ -30,13 +30,12 @@
             <v-list-tile-title>Profile</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <!-- add a v-if to restrict this to organizers once we get vuex up and running -->
-        <v-list-tile router to="/organizer">
+        <v-list-tile router to="/organizer" v-if="viewer.roles.includes('organizer')">
           <v-list-tile-action>
             <v-icon light>dashboard</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>Organizer Dashboard</v-list-tile-title>
+            <v-list-tile-title>Manage Events</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -59,6 +58,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   export default {
       data () {
         return {
@@ -66,6 +66,7 @@
           miniVariant: false,
           title: 'Dashboard'
         }
-      }
+      },
+      computed: mapState(['viewer'])
   }
 </script>

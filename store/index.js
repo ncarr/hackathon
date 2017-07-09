@@ -7,9 +7,14 @@ var client;
 export const state = () => ({viewer: {events:[], github: null, discord:null}}) // TODO: add default state
 
 export const mutations = {
-  SET_VIEWER: function (state, data) {
-    state.viewer = data
-  }
+  SET_STATE(state, data) {
+    for (var property in data) {
+      if (data.hasOwnProperty(property)) {
+        state[property] = data[property]
+      }
+    }
+  },
+  newEvent: (state, data) => state.events.push(data)
 }
 
 export const actions = {
@@ -53,6 +58,6 @@ export const actions = {
               }
           }`
       })
-      .then(result => commit('SET_VIEWER', result.data.viewer));
+      .then(result => commit('SET_STATE', result.data));
   }
 }
