@@ -5,7 +5,7 @@
               <span class="white--text" v-text="event.name"></span>
             </v-card-title>
             <v-card-text>
-                <p>{{ event.times.start }} - {{ event.times.end }}</p>
+                <p>{{ event.start }} - {{ event.end }}</p>
                 <p v-if="event.discord.url"><a :href="event.discord.url">Discord</a></p>
                 <p v-if="event.github.url"><a :href="event.github.url">GitHub</a></p>
                 <p>{{ event.description }}</p>
@@ -45,10 +45,8 @@
                 name
                 description
                 links
-                times {
-                    start
-                    end
-                }
+                start
+                end
                 discord {
                     url
                 }

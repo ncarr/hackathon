@@ -6,7 +6,7 @@
                   <span class="white--text" v-text="event.name"></span>
                 </v-card-title>
                 <v-card-text>
-                    <p>{{ event.times.start }} - {{ event.times.end }}</p>
+                    <p>{{ event.start }} - {{ event.end }}</p>
                     <p>{{ event.description }}</p>
                 </v-card-text>
             </v-card>
@@ -36,10 +36,8 @@
             id
             name
             description
-            times {
-                start
-                end
-            }
+            start
+            end
         }
     }`,
     computed: mapState(['events'])

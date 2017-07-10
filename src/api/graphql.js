@@ -22,6 +22,9 @@ var schema = makeExecutableSchema({
             events: [Event]
             publicMessages: [PushMessage]
         }
+        type Mutation {
+            newEvent(id: ID!, name: String!, description: String, start: Date, end: Date): Event
+        }
         type User {
             id: Int!
             email: String!
@@ -41,7 +44,8 @@ var schema = makeExecutableSchema({
             name: String!
             description: String
             photo: String
-            times: Duration
+            start: Date
+            end: Date
             discord: DiscordChannel
             github: Repo
             links: [String]
@@ -71,10 +75,6 @@ var schema = makeExecutableSchema({
             id: ID
             repos(before: ID, after: ID): RepoList
         }
-        type Duration {
-            start: Date
-            end: Date
-        }
         type DiscordChannel {
             id: ID
             url: String
@@ -95,32 +95,21 @@ var schema = makeExecutableSchema({
     resolvers: {
         Date: GraphQLDateTime,
         Query: {
-            viewer(obj, args, context) {
-                return UserModel.findOne({ id: context.user.id }).populate('events').exec();
-            },
-            events(obj) {
-                return EventModel.find().exec();
-            },
-            publicMessages() {
-                return PushMessageModel.find().exec();
-            }
+            viewer: (obj, args, context) => UserModel.findOne({ id: context.user.id }).populate('events').exec(),
+            events: obj => EventModel.find().exec(),
+            publicMessages: obj => PushMessageModel.find().exec()
+        },
+        Mutation: {
+          newEvent: (root, payload) => EventModel.create(payload)
         },
         User: {
-            github(obj) {
-                return { id: obj.github, token: obj.githubToken };
-            }
+            github: obj => ({ id: obj.github, token: obj.githubToken })
         },
         Event: {
-            discord(obj) {
-                return { id: obj.discordID, url: obj.discordURL };
-            },
-            github(obj) {
-                return { id: obj.githubID, url: obj.githubURL };
-            },
-            workshops(obj) {
-                return EventModel.findOne({ id: obj.id }).populate('workshops').exec()
-                    .then(self => self.workshops);
-            },
+            discord: obj => ({ id: obj.discordID, url: obj.discordURL }),
+            github: obj => ({ id: obj.githubID, url: obj.githubURL }),
+            workshops: obj => EventModel.findOne({ id: obj.id }).populate('workshops').exec()
+                .then(self => self.workshops),
             attendees(obj, args, context) {
                 if (context.user.roles.contains('organizer')) {
                     return EventModel.findOne({ id: obj.id }).populate('attendees').exec()
@@ -168,17 +157,14 @@ var schema = makeExecutableSchema({
                     }
                   }
               }`, { before: options.before, after: options.after })
-                .then(query => {
-                    return {
-                        nodes: query.viewer.repositories.nodes.map(node => {
-                            return { id: node.id, url: node.url, name: node.name, client: client };
-                        }),
+                .then(query => ({
+                        nodes: query.viewer.repositories.nodes
+                            .map(node => ({ id: node.id, url: node.url, name: node.name, client: client })),
                         startCursor: query.viewer.repositories.pageInfo.startCursor,
                         endCursor: query.viewer.repositories.pageInfo.endCursor,
                         hasNextPage: query.viewer.repositories.pageInfo.hasNextPage,
                         hasPreviousPage: query.viewer.repositories.pageInfo.hasPreviousPage
-                    }
-                });
+                    }));
             }
         },
         Repo: {

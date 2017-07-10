@@ -5,10 +5,8 @@ var eventSchema = mongoose.Schema({
     name: String,
     description: String,
     photo: String,
-    times: {
-        start: Date,
-        end: Date
-    },
+    start: Date,
+    end: Date,
     discordURL: String,
     discordID: String,
     githubName: String,

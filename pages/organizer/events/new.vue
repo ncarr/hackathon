@@ -37,6 +37,7 @@
 
 <script>
   import uuid from 'uuid'
+  import { mutate } from '~plugins/apollo'
   export default {
     data: () => ({
       event: {
@@ -60,11 +61,14 @@
       submit() {
         let event = this.event
         event.id = uuid.v4()
-        event.times = {
-          start: this.startISODate,
-          stop: this.endISODate
-        }
-        this.$store.commit('newEvent', event)
+        event.start = this.startISODate
+        event.stop = this.endISODate
+        mutate(event)`mutation($id: ID!, $name: String!, $description: String, $start: Date, $end: Date) {
+            newEvent(id: $id, name: $name, description: $description, start: $start, end: $end) {
+                id
+            }
+        }`
+        .then(() => this.$router.push({ name: 'organizer-events-event', params: { event: event.id }}))
       }
     }
   }
