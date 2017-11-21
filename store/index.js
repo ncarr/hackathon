@@ -1,6 +1,7 @@
 import { ApolloClient, createNetworkInterface } from 'apollo-client'
 import 'isomorphic-fetch'
 import gql from '~plugins/apollo'
+import realtime from '~plugins/realtime'
 
 var client;
 
@@ -25,3 +26,5 @@ export const actions = {
         }
     }`(ctx)
 }
+
+export const plugins = [realtime]
